@@ -42,24 +42,5 @@ void main() {
       expect(user1Messages.length, 1);
       expect(user2Messages.length, 1);
     });
-
-    test('clearMessages removes all messages for user', () {
-      messageProvider.addSenderMessage('user1', 'Message 1');
-      messageProvider.addSenderMessage('user1', 'Message 2');
-      expect(messageProvider.getMessagesByUserId('user1').length, 2);
-
-      messageProvider.clearMessages('user1');
-      expect(messageProvider.getMessagesByUserId('user1').length, 0);
-    });
-
-    test('clearMessages does not affect other users', () {
-      messageProvider.addSenderMessage('user1', 'Message 1');
-      messageProvider.addSenderMessage('user2', 'Message 2');
-
-      messageProvider.clearMessages('user1');
-
-      expect(messageProvider.getMessagesByUserId('user1').length, 0);
-      expect(messageProvider.getMessagesByUserId('user2').length, 1);
-    });
   });
 }

@@ -152,32 +152,30 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ),
               if (messageProvider.error != null)
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    color: Colors.red.shade100,
-                    child: Row(
-                      children: [
-                        Icon(Icons.error, color: Colors.red.shade700),
-                        const SizedBox(width: 8),
-                        Text(
-                          messageProvider.error!,
-                          style: TextStyle(color: Colors.red.shade700),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () =>
-                              messageProvider.clearMessages(widget.userId),
-                        ),
-                      ],
+                Flexible(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      color: Colors.red.shade100,
+                      child: Row(
+                        children: [
+                          Icon(Icons.error, color: Colors.red.shade700),
+                          const SizedBox(width: 8),
+                          Text(
+                            messageProvider.error!,
+                            style: TextStyle(color: Colors.red.shade700),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => messageProvider.clearError(),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: _buildMessageInput(messageProvider),
-              ),
+              _buildMessageInput(messageProvider),
             ],
           );
         },
@@ -287,24 +285,29 @@ class _ChatScreenState extends State<ChatScreen> {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Expanded(
-          child: TextField(
-            controller: _messageController,
-            decoration: InputDecoration(
-              hintText: 'Type a message...',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-              isDense: true,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: 100,
             ),
-            minLines: 1,
-            maxLines: 3,
-            onChanged: (value) {
-              setState(() {});
-            },
+            child: TextField(
+              controller: _messageController,
+              decoration: InputDecoration(
+                hintText: 'Type a message...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                isDense: true,
+              ),
+              minLines: 1,
+              maxLines: 3,
+              onChanged: (value) {
+                setState(() {});
+              },
+            ),
           ),
         ),
         const SizedBox(width: 8),
@@ -327,58 +330,50 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildLandscapeMessageInput(MessageProvider messageProvider,
       ChatHistoryProvider chatHistoryProvider) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.15,
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Expanded(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: 100,
-              ),
-              child: SingleChildScrollView(
-                child: TextField(
-                  controller: _messageController,
-                  decoration: InputDecoration(
-                    hintText: 'Type a message...',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    isDense: true,
-                  ),
-                  minLines: 1,
-                  maxLines: 3,
-                  onChanged: (value) {
-                    setState(() {});
-                  },
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Expanded(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: 100,
+            ),
+            child: TextField(
+              controller: _messageController,
+              decoration: InputDecoration(
+                hintText: 'Type a message...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
                 ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                isDense: true,
               ),
+              minLines: 1,
+              maxLines: 2,
+              onChanged: (value) {
+                setState(() {});
+              },
             ),
           ),
-          const SizedBox(width: 8),
-          SizedBox(
-            height: 48,
-            width: 48,
-            child: FloatingActionButton(
-              mini: true,
-              onPressed: messageProvider.isLoading
-                  ? null
-                  : () => _sendMessage(messageProvider, chatHistoryProvider),
-              backgroundColor: messageProvider.isLoading
-                  ? Colors.grey
-                  : AppTheme.primaryColor,
-              child: const Icon(Icons.send, size: 20),
-            ),
+        ),
+        const SizedBox(width: 8),
+        SizedBox(
+          height: 48,
+          width: 48,
+          child: FloatingActionButton(
+            mini: true,
+            onPressed: messageProvider.isLoading
+                ? null
+                : () => _sendMessage(messageProvider, chatHistoryProvider),
+            backgroundColor:
+                messageProvider.isLoading ? Colors.grey : AppTheme.primaryColor,
+            child: const Icon(Icons.send, size: 20),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

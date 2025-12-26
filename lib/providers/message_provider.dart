@@ -62,8 +62,7 @@ class MessageProvider extends ChangeNotifier {
     }
   }
 
-  void clearMessages(String userId) {
-    _messagesByUserId.remove(userId);
+  void clearError() {
     _error = null;
     notifyListeners();
   }
