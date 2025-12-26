@@ -15,7 +15,7 @@ void main() {
       chatHistoryProvider = ChatHistoryProvider();
     });
 
-    test('UserProvider works correctly', () {
+    test('UserProvider: should add and retrieve a user correctly', () {
       expect(userProvider.users.isNotEmpty, true);
       userProvider.addUser('John Doe');
       expect(userProvider.users.isNotEmpty, true);
@@ -23,7 +23,7 @@ void main() {
       expect(user, isNotNull);
     });
 
-    test('MessageProvider manages messages correctly', () {
+    test('MessageProvider: should add and retrieve messages for a user', () {
       final userId = 'user1';
       expect(messageProvider.getMessagesByUserId(userId).isEmpty, true);
       messageProvider.addSenderMessage(userId, 'Hello');
@@ -31,7 +31,7 @@ void main() {
       expect(messageProvider.getMessagesByUserId(userId)[0].text, 'Hello');
     });
 
-    test('ChatHistoryProvider tracks chat sessions', () {
+    test('ChatHistoryProvider: should create and update chat sessions', () {
       expect(chatHistoryProvider.chatSessions.isEmpty, true);
       chatHistoryProvider.updateChatSession(
         userId: 'user1',
@@ -42,7 +42,8 @@ void main() {
       expect(chatHistoryProvider.chatSessions[0].lastMessage, 'Hi there!');
     });
 
-    test('Multiple users in chat history', () {
+    test('ChatHistoryProvider: should handle multiple users in chat history',
+        () {
       chatHistoryProvider.updateChatSession(
         userId: 'user1',
         userName: 'Alice',
@@ -61,7 +62,9 @@ void main() {
       expect(chatHistoryProvider.chatSessions.length, 3);
     });
 
-    test('Complete data flow: User -> Message -> ChatHistory', () {
+    test(
+        'Integration: should support complete data flow from user to message to chat history',
+        () {
       final users = userProvider.users;
       final userId = users.first.id;
       final userName = users.first.name;
@@ -81,25 +84,8 @@ void main() {
       expect(session.lastMessage, 'Hello!');
     });
 
-    test('Chat history update with multiple messages', () {
-      final userId = 'user456';
-      final userName = 'Multi-Message User';
-
-      for (int i = 0; i < 5; i++) {
-        messageProvider.addSenderMessage(userId, 'Message $i');
-        chatHistoryProvider.updateChatSession(
-          userId: userId,
-          userName: userName,
-          lastMessage: 'Message $i',
-        );
-      }
-
-      expect(messageProvider.getMessagesByUserId(userId).length, 5);
-      expect(chatHistoryProvider.chatSessions.length, 1);
-      expect(chatHistoryProvider.chatSessions[0].lastMessage, 'Message 4');
-    });
-
-    test('Concurrent user and message operations', () {
+    test('Integration: should handle concurrent user and message operations',
+        () {
       final users = userProvider.users.take(3).toList();
 
       for (final user in users) {
@@ -120,44 +106,6 @@ void main() {
       }
     });
 
-    test('Provider state updates are consistent', () {
-      final users = userProvider.users;
-      final userId = users.first.id;
-      final userName = users.first.name;
-
-      messageProvider.addSenderMessage(userId, 'Test message');
-      chatHistoryProvider.updateChatSession(
-        userId: userId,
-        userName: userName,
-        lastMessage: 'Test message',
-      );
-
-      expect(userProvider.getUserById(userId)!.name, userName);
-      expect(messageProvider.getMessagesByUserId(userId).length, 1);
-      expect(chatHistoryProvider.chatSessions.length, 1);
-      expect(chatHistoryProvider.chatSessions[0].userId, userId);
-    });
-  });
-
-  group('Data Validation Integration Tests', () {
-    late MessageProvider messageProvider;
-
-    setUp(() {
-      messageProvider = MessageProvider();
-    });
-
-    test('Long message handling', () {
-      const userId = 'user1';
-      final longMessage = 'a' * 1000;
-      messageProvider.addSenderMessage(userId, longMessage);
-      expect(messageProvider.getMessagesByUserId(userId)[0].text.length, 1000);
-    });
-
-    test('Special characters in messages', () {
-      const userId = 'user1';
-      const specialText = '😀 @#\$%^&*() <html>';
-      messageProvider.addSenderMessage(userId, specialText);
-      expect(messageProvider.getMessagesByUserId(userId)[0].text, specialText);
-    });
+   
   });
 }

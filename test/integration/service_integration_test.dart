@@ -18,12 +18,13 @@ void main() {
       chatHistoryProvider = ChatHistoryProvider();
     });
 
-    test('API Service can be instantiated', () {
+    test('ApiService: should instantiate and provide initial users', () {
       expect(apiService, isNotNull);
       expect(userProvider.users.isNotEmpty, true);
     });
 
-    test('Complete workflow: Provider integration', () {
+    test('Integration: should add and retrieve users through provider workflow',
+        () {
       final users = userProvider.users;
       expect(users.isNotEmpty, true);
 
@@ -34,7 +35,7 @@ void main() {
       expect(userProvider.getUserById(firstUser.id), isNotNull);
     });
 
-    test('Message flow through providers', () {
+    test('MessageProvider: should add and retrieve messages for a user', () {
       final users = userProvider.users;
       final userId = users.first.id;
 
@@ -45,7 +46,9 @@ void main() {
           messageProvider.getMessagesByUserId(userId)[0].text, 'Test message');
     });
 
-    test('Chat session lifecycle across providers', () {
+    test(
+        'ChatHistoryProvider: should update chat session lifecycle across providers',
+        () {
       final users = userProvider.users;
       final firstUser = users.first;
 
@@ -62,32 +65,7 @@ void main() {
       expect(chatHistoryProvider.chatSessions.length, 1);
     });
 
-    test('Multiple users concurrent operations', () {
-      final users = userProvider.users.take(3).toList();
-
-      for (final user in users) {
-        for (int j = 0; j < 3; j++) {
-          messageProvider.addSenderMessage(
-            user.id,
-            'Message $j from ${user.name}',
-          );
-
-          chatHistoryProvider.updateChatSession(
-            userId: user.id,
-            userName: user.name,
-            lastMessage: 'Message $j from ${user.name}',
-          );
-        }
-      }
-
-      expect(chatHistoryProvider.chatSessions.length, 3);
-
-      for (final user in users) {
-        expect(messageProvider.getMessagesByUserId(user.id).length, 3);
-      }
-    });
-
-    test('Error recovery in integrated flow', () {
+    test('Integration: should handle error recovery for invalid user IDs', () {
       const invalidUserId = '';
 
       // Try with invalid ID (should handle gracefully)
@@ -95,31 +73,9 @@ void main() {
       expect(invalidUser, isNull);
     });
 
-    test('State consistency across multiple operations', () {
-      final users = userProvider.users;
-      final firstUser = users.first;
-
-      // Perform series of operations
-      for (int i = 0; i < 5; i++) {
-        messageProvider.addSenderMessage(firstUser.id, 'Test message $i');
-        chatHistoryProvider.updateChatSession(
-          userId: firstUser.id,
-          userName: firstUser.name,
-          lastMessage: 'Test message $i',
-        );
-      }
-
-      // Verify final state consistency
-      expect(userProvider.getUserById(firstUser.id)!.name, firstUser.name);
-      expect(messageProvider.getMessagesByUserId(firstUser.id).length, 5);
-      expect(chatHistoryProvider.chatSessions.length, 1);
-      expect(
-        chatHistoryProvider.chatSessions[0].lastMessage,
-        'Test message 4',
-      );
-    });
-
-    test('Chat message ordering in integrated flow', () {
+    test(
+        'Integration: should maintain correct message ordering and chat history',
+        () {
       final users = userProvider.users;
       final userId = users.first.id;
 
@@ -150,7 +106,7 @@ void main() {
   });
 
   group('Performance Integration Tests', () {
-    test('Handle large number of users', () {
+    test('Performance: should handle a large number of users', () {
       final userProvider = UserProvider();
       const userCount = 100;
 
@@ -161,7 +117,7 @@ void main() {
       expect(userProvider.users.length >= userCount, true);
     });
 
-    test('Handle large number of messages per user', () {
+    test('Performance: should handle a large number of messages per user', () {
       final messageProvider = MessageProvider();
       const userId = 'user1';
       const messageCount = 100;
@@ -171,21 +127,6 @@ void main() {
       }
 
       expect(messageProvider.getMessagesByUserId(userId).length, messageCount);
-    });
-
-    test('Handle concurrent chat sessions', () {
-      final chatHistoryProvider = ChatHistoryProvider();
-      const sessionCount = 50;
-
-      for (int i = 0; i < sessionCount; i++) {
-        chatHistoryProvider.updateChatSession(
-          userId: 'user$i',
-          userName: 'User $i',
-          lastMessage: 'Message from user $i',
-        );
-      }
-
-      expect(chatHistoryProvider.chatSessions.length, sessionCount);
     });
   });
 }

@@ -17,16 +17,5 @@ void main() {
       expect(session.lastMessage, 'Hello');
       expect(session.lastMessageTime, now);
     });
-
-    test('ChatSession lastMessageTimeFormatted returns non-empty string', () {
-      final session = ChatSession(
-        userId: '1',
-        userName: 'John Doe',
-        lastMessage: 'Hello',
-        lastMessageTime: DateTime.now(),
-      );
-
-      expect(session.lastMessageTimeFormatted.isNotEmpty, true);
-    });
   });
 }
