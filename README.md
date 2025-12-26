@@ -158,18 +158,16 @@ flutter test --coverage
 
 ### ✅ Code Architecture
 - Clean separation of concerns
-- Repository pattern for data access
 - Provider pattern for state management
 - Custom exceptions for error handling
 - Configuration management (constants, theme)
-- Reusable widgets and utilities
 - SOLID principles adherence
 
 ### ✅ Testing (Brownie Points!)
-- 50+ unit tests for core components
+- 50 unit, intigration tests for core components
 - Test coverage for models, providers, and services
-- Widget tests for UI components (In progress)
-- Integration tests for user flows (In progress)
+- Widget tests for UI components.
+- Integration tests for user flows.
 - Mock-friendly architecture
 - Easy to test implementations
 
@@ -177,25 +175,13 @@ flutter test --coverage
 
 The application implements a robust error handling strategy across all layers:
 
-### 1. Custom Exceptions
-```dart
-enum ChatError {
-  networkTimeout,
-  connectionError,
-  serverError,
-  notFound,
-  invalidInput,
-  unknown
-}
-```
-
-### 2. Error Recovery
+### 1. Error Recovery
 - Automatic retry for failed API calls
 - User-friendly error messages
 - Retry buttons in error states
 - Graceful degradation
 
-### 3. Error Display
+### 2. Error Display
 - Toast/Snackbar notifications
 - Modal dialogs for critical errors
 - Banner notifications for warnings
@@ -232,13 +218,12 @@ See `lib/config/constants.dart` for all configuration options.
 ## Best Practices Implemented ✓
 
 - ✅ Separation of concerns (Models, Services, Providers, Screens)
-- ✅ DRY principle (Reusable widgets, utilities, constants)
-- ✅ Error handling (Custom exceptions, graceful failures)
+- ✅ DRY principle (constants)
 - ✅ State management (Provider pattern, clear state flow)
 - ✅ Code organization (Logical folder structure)
 - ✅ Type safety (Strong typing, null safety)
 - ✅ Testing (Unit tests with good coverage)
-- ✅ Documentation (Code comments, architecture docs)
+- ✅ Documentation (ReadME)
 ---
 
-**Last Updated**: December 25, 2025
+**Last Updated**: December 26, 2025
